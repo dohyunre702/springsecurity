@@ -17,8 +17,8 @@ public class ExceptionManager {
                 .body(Response.error(e.getMessage()));
     }
 
-    @ExceptionHandler(HospitalReviewException.class)
-    public ResponseEntity<?> hospitalReviewExceptionHandler(HospitalReviewException e) {
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<?> hospitalReviewExceptionHandler(AppException e) {
         return ResponseEntity.status(e.getErrorCode().getStatus())
                 .body(Response.error(e.getErrorCode().name()));
     }
