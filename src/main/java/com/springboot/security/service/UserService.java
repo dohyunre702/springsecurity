@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 //username, password 받아서 회원가입 처리
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private UserRepository userRepository;
+    private BCryptPasswordEncoder encoder;
 
     public UserDto join(UserJoinRequest request) {
         //중복 Check
@@ -28,7 +30,8 @@ public class UserService {
                         String.format("Username : %s", request.getUserName()));
     });
 
-        User savedUser = userRepository.save(request.toEntity());
+        //pw 암호화해서 toEntity의 매개변수로 넘겨주기
+        User savedUser = userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
 
         return UserDto.builder()
                 .id(savedUser.getId())

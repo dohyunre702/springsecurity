@@ -16,11 +16,12 @@ public class UserJoinRequest {
     private String password;
     private String email;
 
-    public User toEntity() {
+    public User toEntity(String password) { //password 매개변수 지정
         return User.builder()
                 .userName(this.userName)
-                .password(this.password)
+                .password(password) //db에 저장시 인코딩 위함
                 .email(this.email)
                 .build();
     }
+
 }
