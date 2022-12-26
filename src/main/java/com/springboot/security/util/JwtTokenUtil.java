@@ -1,6 +1,5 @@
 package com.springboot.security.util;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,4 +19,21 @@ public class JwtTokenUtil {
                 .signWith(SignatureAlgorithm.HS256, key) //사용할 알고리즘 설정
                 .compact(); //토큰 생성
     }
+
+    //token에서 secretKey 받아와 인증
+    private static Claims extractClaims(String token, String secretKey) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+    }
+
+    //token 내 Claim에 사용자 정보가 담겨있는지 확인하기 위해 UserName 추출
+    public static String getUserName(String token, String secretKey) {
+        return extractClaims(token, secretKey).get("userName", String.class);
+    }
+
+    //token이 만료되면 접근 거부하기
+    public static boolean isExpired(String token, String key) {
+        Date expiredDate = extractClaims(token, key).getExpiration();
+        return expiredDate.before(new Date());
+    }
+
 }

@@ -40,11 +40,11 @@ public class UserService {
 
     @Value("%{jwt.token.secret}")
     private String secretKey;
-    private final long expiredTimeMs = 1000 * 60 * 60l;
+    private final long expiredTimeMs = 1000 * 60 * 60l; //1시간
 
     //로그인
     public String login(String userName, String password) {
-        //UserName 중복체크
+        //failure1. UserName 중복체크
         User selectedUser = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, userName + "이 없습니다."));
 
@@ -55,8 +55,15 @@ public class UserService {
 
         //success. userName, secretKey, 토큰 유효기간을 받아 JWT 토큰 생성
         String token = JwtTokenUtil.createToken(selectedUser.getUserName(), secretKey, expiredTimeMs);
-
         return token;
     }
+
+    //token이 없으면 접근 거부
+    public User getUserByUserName(String userName) {
+        User user = userRepository.findByUserName(userName).orElseThrow(()
+                -> new AppException(ErrorCode.NOT_FOUND,""));
+                    return user;
+    }
+}
 
 }
